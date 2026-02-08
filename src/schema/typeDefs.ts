@@ -10,7 +10,7 @@ const typeDefs = `#graphql
 
   type Weather {
     temperature: Float!
-    conditions: String!
+    condition: String!
     precipitation: Float!
     windSpeed: Float!
     humidity: Float
@@ -23,8 +23,15 @@ const typeDefs = `#graphql
     forecast: [Weather!]!
   }
 
+  enum ActivityType {
+    SKIING
+    SURFING
+    INDOOR_SIGHTSEEING
+    OUTDOOR_SIGHTSEEING
+  }
+
   type Activity {
-    name: String!
+    type: ActivityType!
     score: Float!
     recommended: Boolean!
     reason: String!
@@ -38,19 +45,19 @@ const typeDefs = `#graphql
 
   type Query {
     """
-    Search for cities by name (minimum 2 characters)
+    Search for cities using Mapbox geocoding (minimum 2 characters)
     """
     searchCities(query: String!): [City!]!
 
     """
-    Get weather forecast for a specific city
+    Get current and short-term forecast from OpenMeteo for the given coordinates
     """
-    getWeatherForecast(cityId: String!): WeatherForecast
+    getWeatherForecast(latitude: Float!, longitude: Float!): WeatherForecast
 
     """
     Get activity recommendations based on current weather
     """
-    getActivityRankings(cityId: String!): ActivityRanking
+    getActivityRankings(latitude: Float!, longitude: Float!): ActivityRanking
   }
 `;
 
