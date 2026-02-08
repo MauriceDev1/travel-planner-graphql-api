@@ -9,7 +9,7 @@ export interface City {
 
 export interface Weather {
   temperature: number;
-  conditions: string;
+  condition: string;
   precipitation: number;
   windSpeed: number;
   humidity?: number;
@@ -23,7 +23,7 @@ export interface WeatherForecast {
 }
 
 export interface Activity {
-  name: string;
+  type: ActivityType;
   score: number;
   recommended: boolean;
   reason: string;
