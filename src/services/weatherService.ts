@@ -81,7 +81,7 @@ const weatherService = {
   formatCurrentWeather(current: OpenMeteoResponse['current']): Weather {
     return {
       temperature: current.temperature_2m,
-      conditions: this.getWeatherCondition(current.weather_code),
+      condition: this.getWeatherCondition(current.weather_code),
       precipitation: current.precipitation || 0,
       windSpeed: current.wind_speed_10m,
       timestamp: current.time,
@@ -99,7 +99,7 @@ const weatherService = {
     // Get next 24 hours
     return hourly.time.slice(0, 24).map((time, index) => ({
       temperature: hourly.temperature_2m[index],
-      conditions: this.getWeatherCondition(hourly.weather_code[index]),
+      condition: this.getWeatherCondition(hourly.weather_code[index]),
       precipitation: hourly.precipitation[index],
       windSpeed: hourly.wind_speed_10m[index],
       humidity: hourly.relative_humidity_2m[index],
