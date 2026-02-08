@@ -1,23 +1,25 @@
 import { Weather, WeatherForecast, City } from '../models/types';
 import { ExternalAPIError, NotFoundError } from '../utils/errors';
 import cache from '../utils/cache';
+import fetch from 'node-fetch';
 
 const OPEN_METEO_API = 'https://api.open-meteo.com/v1/forecast';
 
 interface OpenMeteoResponse {
-  current_weather: {
-    temperature: number;
-    windspeed: number;
-    weathercode: number;
+  current: {
+    temperature_2m: number;
+    wind_speed_10m: number;
+    weather_code: number;
     time: string;
+    precipitation: number;
   };
   hourly?: {
     time: string[];
     temperature_2m: number[];
     precipitation: number[];
-    windspeed_10m: number[];
-    relativehumidity_2m: number[];
-    weathercode: number[];
+    wind_speed_10m: number[];
+    relative_humidity_2m: number[];
+    weather_code: number[];
   };
 }
 
@@ -37,9 +39,12 @@ const weatherService = {
       const url = `${OPEN_METEO_API}?` +
         `latitude=${city.latitude}&` +
         `longitude=${city.longitude}&` +
-        `current_weather=true&` +
-        `hourly=temperature_2m,precipitation,windspeed_10m,relativehumidity_2m,weathercode&` +
-        `forecast_days=3`;
+        `current=temperature_2m,precipitation,wind_speed_10m,weather_code&` +
+        `hourly=temperature_2m,precipitation,wind_speed_10m,relative_humidity_2m,weather_code&` +
+        `forecast_days=3&` +
+        `timezone=auto`;
+
+      console.log('Fetching weather from:', url); // Debug
 
       const response = await fetch(url);
 
@@ -49,19 +54,20 @@ const weatherService = {
 
       const data = await response.json() as OpenMeteoResponse;
 
-      if (!data.current_weather) {
+      if (!data.current) {
         throw new NotFoundError('Weather data not available for this location');
       }
 
       const forecast: WeatherForecast = {
         city,
-        current: this.formatCurrentWeather(data.current_weather),
+        current: this.formatCurrentWeather(data.current),
         forecast: this.formatHourlyForecast(data.hourly || {} as any),
       };
 
       cache.set(cacheKey, forecast);
       return forecast;
     } catch (error) {
+      console.error('Weather service error:', error); // Debug
       if (error instanceof ExternalAPIError || error instanceof NotFoundError) {
         throw error;
       }
@@ -72,12 +78,12 @@ const weatherService = {
   /**
    * Format current weather data
    */
-  formatCurrentWeather(current: OpenMeteoResponse['current_weather']): Weather {
+  formatCurrentWeather(current: OpenMeteoResponse['current']): Weather {
     return {
-      temperature: current.temperature,
-      conditions: this.getWeatherCondition(current.weathercode),
-      precipitation: 0, // Current weather doesn't include precipitation
-      windSpeed: current.windspeed,
+      temperature: current.temperature_2m,
+      conditions: this.getWeatherCondition(current.weather_code),
+      precipitation: current.precipitation || 0,
+      windSpeed: current.wind_speed_10m,
       timestamp: current.time,
     };
   },
@@ -93,10 +99,10 @@ const weatherService = {
     // Get next 24 hours
     return hourly.time.slice(0, 24).map((time, index) => ({
       temperature: hourly.temperature_2m[index],
-      conditions: this.getWeatherCondition(hourly.weathercode[index]),
+      conditions: this.getWeatherCondition(hourly.weather_code[index]),
       precipitation: hourly.precipitation[index],
-      windSpeed: hourly.windspeed_10m[index],
-      humidity: hourly.relativehumidity_2m[index],
+      windSpeed: hourly.wind_speed_10m[index],
+      humidity: hourly.relative_humidity_2m[index],
       timestamp: time,
     }));
   },
