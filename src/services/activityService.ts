@@ -23,6 +23,7 @@ const activityService = {
 
     const activities: Activity[] = scores.map(item => ({
       name: item.type,
+      type: item.type,
       score: item.score,
       recommended: item.score >= 7,
       reason: item.reason,
@@ -59,7 +60,7 @@ const activityService = {
     }
 
     // Snow/precipitation scoring
-    if (weather.conditions.toLowerCase().includes('snow')) {
+    if (weather.condition.toLowerCase().includes('snow')) {
       score += 9;
       reasons.push('snowy conditions');
     } else if (weather.precipitation > 5) {
