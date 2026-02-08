@@ -36,10 +36,10 @@ export interface ActivityRanking {
 }
 
 export enum ActivityType {
-  SKIING = 'Skiing',
-  SURFING = 'Surfing',
-  INDOOR_SIGHTSEEING = 'Indoor sightseeing',
-  OUTDOOR_SIGHTSEEING = 'Outdoor Sightseeing',
+  SKIING = 'SKIING',
+  SURFING = 'SURFING',
+  INDOOR_SIGHTSEEING = 'INDOOR_SIGHTSEEING',
+  OUTDOOR_SIGHTSEEING = 'OUTDOOR_SIGHTSEEING',
 }
 
 export default {};

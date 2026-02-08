@@ -84,12 +84,12 @@ http://localhost:4000/graphql
 
 ### Search for a city
 ```graphql
-query {
-  searchCities(query: "London") {
-    name
+query SearchCities($query: String!) {
+  searchCities(query: $query) {
     country
     latitude
     longitude
+    name
   }
 }
 ```
