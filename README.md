@@ -140,6 +140,7 @@ npm run test:coverage
 - **Apollo Server** - GraphQL server implementation
 - **TypeScript** - Type-safe development
 - **Node.js** - Runtime environment
+- **Mapbox Geocoding API** - City search and location data
 - **OpenMeteo API** - Weather data provider
 - **Jest** - Testing framework
 
