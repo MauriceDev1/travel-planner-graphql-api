@@ -96,27 +96,29 @@ query SearchCities($query: String!) {
 
 ### Get weather forecast
 ```graphql
-query {
-  getWeather(latitude: 51.5074, longitude: -0.1278) {
-    date
-    temperature
-    condition
-    precipitation
+query GetWeatherForecast($latitude: Float!, $longitude: Float!){
+  getWeatherForecast(latitude: $latitude, longitude: $longitude) {
+    current {
+      condition
+      precipitation
+      temperature
+      timestamp
+      windSpeed
+    }
   }
 }
 ```
 
 ### Get activity recommendations
 ```graphql
-query {
-  getActivities(
-    latitude: 51.5074
-    longitude: -0.1278
-    preferences: ["museums", "parks", "restaurants"]
-  ) {
-    name
-    suitabilityScore
-    reason
+query GetActivityRankings($latitude: Float!, $longitude: Float!){
+  getActivityRankings(latitude: $latitude, longitude: $longitude) {
+    activities {
+      reason
+      recommended
+      type
+      score
+    }
   }
 }
 ```
